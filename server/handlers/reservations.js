@@ -3,7 +3,10 @@ const customParseFormat = require('dayjs/plugin/customParseFormat');
 const { ObjectId } = require("mongodb");
 dayjs.extend(customParseFormat);
 
-const { RESERVATIONS_COLLECTION } = require("../constants/mongoDBConstants");
+const { 
+    RESERVATIONS_COLLECTION, 
+    MONGODB_OBJECT_ID_LENGTH 
+} = require("../constants/mongoDBConstants");
 
 const { 
     validateEmail,
@@ -103,7 +106,7 @@ const getReservation = async (req, res) => {
     const { reservationId, email } = req.params;
     const db = req.app.locals.db;
     
-    if(reservationId.length === 24) {
+    if(reservationId.length === MONGODB_OBJECT_ID_LENGTH) {
         try {
             const result = await db.collection(RESERVATIONS_COLLECTION).findOne( { _id: ObjectId(reservationId), email } );
             if(result) {
@@ -131,7 +134,7 @@ const deleteReservation = async (req, res) => {
     const { reservationId, email } = req.params;
     const db = req.app.locals.db;
 
-    if(reservationId.length === 24) {
+    if(reservationId.length === MONGODB_OBJECT_ID_LENGTH) {
         try {
             const result = await db.collection(RESERVATIONS_COLLECTION).deleteOne( { _id: ObjectId(reservationId), email } );
             if(result.deletedCount === 1) {
