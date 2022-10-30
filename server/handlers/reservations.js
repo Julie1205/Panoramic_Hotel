@@ -103,22 +103,27 @@ const getReservation = async (req, res) => {
     const { reservationId, email } = req.params;
     const db = req.app.locals.db;
     
-    try {
-        const result = await db.collection(RESERVATIONS_COLLECTION).findOne( { _id: ObjectId(reservationId), email } );
-        if(result) {
-            return res.status(200).json({ 
-                status: 200, 
-                result: result, 
-                message: `Reservation number: ${ result._id }, Name: ${result.firstName} ${ result.lastName }, Number of people: ${ result.numberOfPeople }, Dates: ${ result.dates[0] } to ${ result.dates[result.dates.length - 1] }.` 
-            });
+    if(reservationId.length === 24) {
+        try {
+            const result = await db.collection(RESERVATIONS_COLLECTION).findOne( { _id: ObjectId(reservationId), email } );
+            if(result) {
+                return res.status(200).json({ 
+                    status: 200, 
+                    result: result, 
+                    message: `Reservation number: ${ result._id }, Name: ${result.firstName} ${ result.lastName }, Number of people: ${ result.numberOfPeople }, Dates: ${ result.dates[0] } to ${ result.dates[result.dates.length - 1] }.` 
+                });
+            }
+            else {
+                return res.status(404).json( { status: 404, data: req.params, message: "Reservation not found." } )
+            }
         }
-        else {
-            return res.status(404).json( { status: 404, data: req.params, message: "Reservation not found." } )
+        catch (err) {
+            console.log(err.stack);
+            res.status(500).json( { status: 500, data: req.body, message: err.message } );
         }
     }
-    catch (err) {
-        console.log(err.stack);
-        res.status(500).json( { status: 500, data: req.body, message: err.message } );
+    else {
+        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id." } );
     }
 };
 
