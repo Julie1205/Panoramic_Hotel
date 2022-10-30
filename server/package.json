@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "dayjs": "^1.11.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongodb": "^4.11.0",
