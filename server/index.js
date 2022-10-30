@@ -19,9 +19,9 @@ app.use(morgan("tiny"));
 app.use(express.json());
 
 //reservation endpoints
-app.get("/reservation/:reservationId/:email", getReservation);
+app.get("/reservation/:reservationId", getReservation);
 app.post("/reservation", makeReservation);
-app.delete("/reservation/:reservationId/:email", deleteReservation);
+app.delete("/reservation/:reservationId", deleteReservation);
 
 //catch all endpoint
 app.get("*", (req, res) => {

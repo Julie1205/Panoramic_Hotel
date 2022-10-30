@@ -79,7 +79,7 @@ const makeReservation = async (req, res) => {
                         res.status(201).json( { 
                             status: 201,
                             result: reservationId,  
-                            message: `Your reservation number is ${ reservationId } and the email used to make the reservation is ${ newReservation.email }. To cancel your reservation or retrieve your reservation details, you will need both your reservation number and the email you used to make the reservation.`
+                            message: `Your reservation number is ${ reservationId }. To cancel your reservation or retrieve your reservation details, you will need your reservation number.`
                         } );
                     }
                     else {
@@ -103,12 +103,12 @@ const makeReservation = async (req, res) => {
 };
 
 const getReservation = async (req, res) => {
-    const { reservationId, email } = req.params;
+    const { reservationId } = req.params;
     const db = req.app.locals.db;
     
     if(reservationId.length === MONGODB_OBJECT_ID_LENGTH) {
         try {
-            const result = await db.collection(RESERVATIONS_COLLECTION).findOne( { _id: ObjectId(reservationId), email } );
+            const result = await db.collection(RESERVATIONS_COLLECTION).findOne( { _id: ObjectId(reservationId) } );
             if(result) {
                 return res.status(200).json({ 
                     status: 200, 
@@ -131,12 +131,12 @@ const getReservation = async (req, res) => {
 };
 
 const deleteReservation = async (req, res) => {
-    const { reservationId, email } = req.params;
+    const { reservationId } = req.params;
     const db = req.app.locals.db;
 
     if(reservationId.length === MONGODB_OBJECT_ID_LENGTH) {
         try {
-            const result = await db.collection(RESERVATIONS_COLLECTION).deleteOne( { _id: ObjectId(reservationId), email } );
+            const result = await db.collection(RESERVATIONS_COLLECTION).deleteOne( { _id: ObjectId(reservationId) } );
             if(result.deletedCount === 1) {
                 return res.status(200).json({ 
                     status: 200, 
@@ -153,7 +153,7 @@ const deleteReservation = async (req, res) => {
         }
     }
     else {
-        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id." } );
+        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id format." } );
     }
 };
 
