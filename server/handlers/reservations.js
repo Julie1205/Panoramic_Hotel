@@ -1,5 +1,6 @@
 const dayjs = require("dayjs");
 const customParseFormat = require('dayjs/plugin/customParseFormat');
+const { ObjectId } = require("mongodb");
 dayjs.extend(customParseFormat);
 
 const { RESERVATIONS_COLLECTION } = require("../constants/mongoDBConstants");
@@ -72,8 +73,8 @@ const makeReservation = async (req, res) => {
 
                     if(insertResult.insertedId) {
                         let reservationId = insertResult.insertedId;
-                        res.status(200).json( { 
-                            status: 200,
+                        res.status(201).json( { 
+                            status: 201,
                             result: reservationId,  
                             message: `Your reservation number is ${ reservationId } and the email used to make the reservation is ${ newReservation.email }. To cancel your reservation or retrieve your reservation details, you will need both your reservation number and the email you used to make the reservation.`
                         } );
@@ -98,4 +99,27 @@ const makeReservation = async (req, res) => {
     }
 };
 
-module.exports = { makeReservation };
+const getReservation = async (req, res) => {
+    const { reservationId, email } = req.params;
+    const db = req.app.locals.db;
+    
+    try {
+        const result = await db.collection(RESERVATIONS_COLLECTION).findOne( { _id: ObjectId(reservationId), email } );
+        if(result) {
+            return res.status(200).json({ 
+                status: 200, 
+                result: result, 
+                message: `Reservation number: ${ result._id }, Name: ${result.firstName} ${ result.lastName }, Number of people: ${ result.numberOfPeople }, Dates: ${ result.dates[0] } to ${ result.dates[result.dates.length - 1] }.` 
+            });
+        }
+        else {
+            return res.status(404).json( { status: 404, data: req.params, message: "Reservation not found." } )
+        }
+    }
+    catch (err) {
+        console.log(err.stack);
+        res.status(500).json( { status: 500, data: req.body, message: err.message } );
+    }
+};
+
+module.exports = { makeReservation, getReservation };

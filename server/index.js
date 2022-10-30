@@ -6,7 +6,7 @@ const {
     closeMongoDb 
 } = require("./mongoDBConnections/mongoDBConnectionFunctions");
 
-const { makeReservation } = require("./handlers/reservations");
+const { makeReservation, getReservation } = require("./handlers/reservations");
 
 const app = express();
 const port = 8000;
@@ -15,6 +15,7 @@ app.use(morgan("tiny"));
 app.use(express.json());
 
 //reservation endpoints
+app.get("/reservation/:reservationId/:email", getReservation);
 app.post("/reservation", makeReservation);
 
 //connect to mongoDB and store connection inapp.locals to be available throughout app
