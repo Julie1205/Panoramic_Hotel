@@ -70,10 +70,9 @@ const validateDate = (date) => {
 };
 
 const validateNumberOfDaysBooked = (checkInDate, checkOutDate) => {
-    const isAtLeastMinNumDay = dayjs(checkOutDate).diff(checkInDate, "days") >= MINIMUM_NUMBER_DAYS;
-    const isAtMostMaxNumDays = dayjs(checkOutDate).diff(checkInDate, "days") < MAX_NUMBER_DAYS;
-    const isNumberOfDaysBookedGood = isAtLeastMinNumDay && isAtMostMaxNumDays;
-    return isNumberOfDaysBookedGood;
+    const isAtLeastMinNumDay = dayjs(checkOutDate).diff(checkInDate, "days") + 1 >= MINIMUM_NUMBER_DAYS;
+    const isAtMostMaxNumDays = dayjs(checkOutDate).diff(checkInDate, "days") + 1 <= MAX_NUMBER_DAYS;
+    return  isAtLeastMinNumDay && isAtMostMaxNumDays;
 };
 
 module.exports = {
