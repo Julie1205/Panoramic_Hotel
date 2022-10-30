@@ -122,4 +122,31 @@ const getReservation = async (req, res) => {
     }
 };
 
-module.exports = { makeReservation, getReservation };
+const deleteReservation = async (req, res) => {
+    const { reservationId, email } = req.params;
+    const db = req.app.locals.db;
+
+    if(reservationId.length === 24) {
+        try {
+            const result = await db.collection(RESERVATIONS_COLLECTION).deleteOne( { _id: ObjectId(reservationId), email } );
+            if(result.deletedCount === 1) {
+                return res.status(200).json({ 
+                    status: 200, 
+                    message: `Reservation number ${ reservationId } cancelled.` 
+                });
+            }
+            else {
+                return res.status(404).json( { status: 404, data: req.params, message: "Reservation could not be found and or deleted." } )
+            }
+        }
+        catch (err) {
+            console.log(err.stack);
+            res.status(500).json( { status: 500, data: req.body, message: err.message } );
+        }
+    }
+    else {
+        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id." } );
+    }
+};
+
+module.exports = { makeReservation, getReservation, deleteReservation };
