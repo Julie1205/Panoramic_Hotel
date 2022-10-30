@@ -2,7 +2,7 @@ const { MongoClient } = require("mongodb");
 require("dotenv").config();
 
 const { MONGO_URI } = process.env;
-const { DATABASE_NAME } = require("../constants/mongoDBConstants");
+const { DATABASE_NAME } = require("../../constants/mongoDB");
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true

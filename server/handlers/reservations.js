@@ -6,7 +6,7 @@ dayjs.extend(customParseFormat);
 const { 
     RESERVATIONS_COLLECTION, 
     MONGODB_OBJECT_ID_LENGTH 
-} = require("../constants/mongoDBConstants");
+} = require("../constants/mongoDB");
 
 const { 
     validateEmail,
@@ -14,7 +14,7 @@ const {
     validateNumberOfPeople,
     validateDate,
     validateNumberOfDaysBooked
-} = require("../validationFunctions/reservationValidations");
+} = require("./validation/reservation");
 
 const makeReservation = async (req, res) => {
     const { 
@@ -66,8 +66,8 @@ const makeReservation = async (req, res) => {
                 else {
                     const newReservation = {
                         email: email.toLowerCase().trim(),
-                        firstName: firstName.trim().toLowerCase(),
-                        lastName:lastName.trim().toLowerCase(),
+                        firstName: firstName.trim(),
+                        lastName:lastName.trim(),
                         numberOfPeople: numberOfPeople,
                         dates: daysToBookArray
                     };
@@ -126,7 +126,7 @@ const getReservation = async (req, res) => {
         }
     }
     else {
-        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id." } );
+        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id format." } );
     }
 };
 

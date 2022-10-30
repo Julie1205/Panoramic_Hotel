@@ -7,7 +7,7 @@ const {
     MAX_NUMBER_DAYS,
     MINIMUM_NUMBER_PEOPLE,
     MAX_NUMBER_PEOPLE
-} = require("../constants/reservationConstants");
+} = require("../../constants/reservation");
 
 const validateEmail = (email) => {
     const emailRegEx = /\w+\@\w+\.\w+/;

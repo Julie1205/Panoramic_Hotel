@@ -4,7 +4,7 @@ const morgan = require("morgan");
 const { 
     connectToMongoDb,  
     closeMongoDb 
-} = require("./mongoDBConnections/mongoDBConnectionFunctions");
+} = require("./data/mongoDB/connection");
 
 const { 
     makeReservation, 
@@ -27,7 +27,7 @@ app.delete("/reservation/:reservationId/:email", deleteReservation);
 app.get("*", (req, res) => {
     res.status(404).json({
         status: 404,
-        message: "Invalid request."
+        message: "Resource not found"
     });
 });
 
