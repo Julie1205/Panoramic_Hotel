@@ -23,6 +23,15 @@ app.get("/reservation/:reservationId/:email", getReservation);
 app.post("/reservation", makeReservation);
 app.delete("/reservation/:reservationId/:email", deleteReservation);
 
+//catch all endpoint
+app.get("*", (req, res) => {
+    res.status(404).json({
+        status: 404,
+        message: "Invalid request."
+    });
+});
+
+
 //connect to mongoDB and store connection inapp.locals to be available throughout app
 connectToMongoDb()
 .then(db => {
