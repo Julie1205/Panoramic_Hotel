@@ -25,7 +25,7 @@ const makeReservation = async (req, res) => {
         checkInDate, 
         checkOutDate 
     } = req.body;
-    
+
     const db = req.app.locals.db;
 
     //validating the entries
@@ -117,16 +117,16 @@ const getReservation = async (req, res) => {
                 });
             }
             else {
-                return res.status(404).json( { status: 404, data: req.params, message: "Reservation not found." } )
+                return res.status(404).json( { status: 404, data: req.params.reservationId, message: "Reservation not found." } )
             }
         }
         catch (err) {
             console.log(err.stack);
-            res.status(500).json( { status: 500, data: req.body, message: err.message } );
+            res.status(500).json( { status: 500, data: req.params.reservationId, message: err.message } );
         }
     }
     else {
-        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id format." } );
+        return res.status(400).json( { status: 400, data: req.params.reservationId, message: "Invalid reservation Id format." } );
     }
 };
 
@@ -144,16 +144,16 @@ const deleteReservation = async (req, res) => {
                 });
             }
             else {
-                return res.status(404).json( { status: 404, data: req.params, message: "Reservation could not be found and or deleted." } )
+                return res.status(404).json( { status: 404, data: req.params.reservationId, message: "Reservation could not be found and or deleted." } )
             }
         }
         catch (err) {
             console.log(err.stack);
-            res.status(500).json( { status: 500, data: req.body, message: err.message } );
+            res.status(500).json( { status: 500, data: req.params.reservationId, message: err.message } );
         }
     }
     else {
-        return res.status(400).json( { status: 400, data: req.params, message: "Invalid reservation Id format." } );
+        return res.status(400).json( { status: 400, data: req.params.reservationId, message: "Invalid reservation Id format." } );
     }
 };
 
