@@ -1,6 +1,5 @@
 const express = require("express");
 const morgan = require("morgan");
-
 const { 
     makeReservation, 
     getReservation,
@@ -18,7 +17,7 @@ app.post("/reservation", makeReservation);
 app.delete("/reservation/:reservationId", deleteReservation);
 
 //catch all endpoint
-app.get("*", (req, res) => {
+app.get("*", (_, res) => {
     res.status(404).json({
         status: 404,
         message: "Resource not found"

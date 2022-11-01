@@ -2,7 +2,6 @@ const request = require("supertest");
 const app = require("../app");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const { MongoClient, ObjectId } = require("mongodb");
-
 const { RESERVATIONS_COLLECTION } = require("../constants/mongoDB");
 
 const { 
@@ -21,30 +20,32 @@ jest.mock('../handlers/validation/reservation.js', () => ({
     validateNumberOfDaysBooked: jest.fn(),
 }));
 
+let connection;
+let testDatabase;
+let db;
+
+beforeAll(async () => {
+    testDatabase = await MongoMemoryServer.create();
+
+    const uri = testDatabase.getUri();
+    const options = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    };
+
+    connection = await MongoClient.connect(uri, options);
+    db = await connection.db("Test");
+    app.locals.db = db;
+});
+
+beforeEach(() => db.dropDatabase());
+
+afterAll(() => {
+    connection.close();
+    testDatabase.stop()
+});
+
 describe("GET reservation", () => {
-    let connection;
-    let testDatabase;
-    let db;
-
-    beforeAll(async () => {
-        testDatabase = await MongoMemoryServer.create();
-
-        const uri = testDatabase.getUri();
-        const options = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        };
-
-        connection = await MongoClient.connect(uri, options);
-        db = await connection.db("Test");
-        app.locals.db = db;
-    });
-    
-    afterAll(() => {
-        connection.close();
-        testDatabase.stop()
-    });
-
     it("should fail if reservationId length < MONGODB_OBJECT_ID_LENGTH", () => {
         return request(app)
             .get("/reservation/2")
@@ -75,12 +76,12 @@ describe("GET reservation", () => {
 
     it("should pass if reservationId is in database", () => {
         const mockReservation = {
-            "_id": ObjectId("635ea9027fcc5992e79f0322"),
-            "email": "a@gmail.com",
-            "firstName": "V",
-            "lastName": "R",
-            "numberOfPeople": 2,
-            "dates": ["2022-10-31"]
+            _id: ObjectId("635ea9027fcc5992e79f0322"),
+            email: "a@gmail.com",
+            firstName: "V",
+            lastName: "R",
+            numberOfPeople: 2,
+            dates: ["2022-10-31"]
         };
         db.collection(RESERVATIONS_COLLECTION).insertOne(mockReservation);
 
@@ -91,7 +92,7 @@ describe("GET reservation", () => {
             .then(response => {
                 expect(response.body).toEqual({ 
                     status: 200,
-                    result: {...mockReservation, "_id": "635ea9027fcc5992e79f0322"},
+                    result: {...mockReservation, _id: "635ea9027fcc5992e79f0322"},
                     message: "Reservation number: 635ea9027fcc5992e79f0322, Name: V R, Number of people: 2, Dates: 2022-10-31 to 2022-10-31." 
                 });
             });
@@ -99,29 +100,6 @@ describe("GET reservation", () => {
 });
 
 describe("POST reservation", () => {
-    let connection;
-    let testDatabase;
-    let db;
-
-    beforeAll(async () => {
-        testDatabase = await MongoMemoryServer.create();
-
-        const uri = testDatabase.getUri();
-        const options = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        };
-
-        connection = await MongoClient.connect(uri, options);
-        db = await connection.db("Test");
-        app.locals.db = db;
-    });
-    
-    afterAll(() => {
-        connection.close();
-        testDatabase.stop()
-    });
-
     it("should fail if no params passed", () => {
         validateEmail.mockImplementation(() => false);
         validateName.mockImplementation(() => false);
@@ -144,11 +122,11 @@ describe("POST reservation", () => {
 
     it("should fail if one param is not valid", () => {
         const mockReservation = {
-            "firstName": "V",
-            "lastName": "R",
-            "numberOfPeople": 2,
-            "checkInDate": "2022-10-31",
-            "checkOutDate": "2022-11-01"
+            firstName: "V",
+            lastName: "R",
+            numberOfPeople: 2,
+            checkInDate: "2022-10-31",
+            checkOutDate: "2022-11-01"
         };
 
         validateEmail.mockImplementation(() => false);
@@ -172,12 +150,12 @@ describe("POST reservation", () => {
 
     it("should fail if number of days booked is not good", () => {
         const mockReservation = {
-            "email": "a@gmail.com",
-            "firstName": "V",
-            "lastName": "R",
-            "numberOfPeople": 2,
-            "checkInDate": "2022-11-02",
-            "checkOutDate": "2022-11-01"
+            email: "a@gmail.com",
+            firstName: "V",
+            lastName: "R",
+            numberOfPeople: 2,
+            checkInDate: "2022-11-02",
+            checkOutDate: "2022-11-01"
         };
 
         validateEmail.mockImplementation(() => true);
@@ -202,22 +180,22 @@ describe("POST reservation", () => {
 
     it("should fail if all dates are already in database", () => {
         const mockReservationInDatabase = {
-            "_id": ObjectId("635ea9027fcc5992e79f0322"),
-            "email": "a@gmail.com",
-            "firstName": "V",
-            "lastName": "R",
-            "numberOfPeople": 2,
-            "dates": ["2022-10-31", "2022-11-01", "2022-11-02"]
+            _id: ObjectId("635ea9027fcc5992e79f0322"),
+            email: "a@gmail.com",
+            firstName: "V",
+            lastName: "R",
+            numberOfPeople: 2,
+            dates: ["2022-10-31", "2022-11-01", "2022-11-02"]
         };
         db.collection(RESERVATIONS_COLLECTION).insertOne(mockReservationInDatabase);
         
         const mockReservationToAddToDatabase = {
-            "email": "b@gmail.com",
-            "firstName": "E",
-            "lastName": "T",
-            "numberOfPeople": 3,
-            "checkInDate": "2022-10-31",
-            "checkOutDate": "2022-11-02",
+            email: "b@gmail.com",
+            firstName: "E",
+            lastName: "T",
+            numberOfPeople: 3,
+            checkInDate: "2022-10-31",
+            checkOutDate: "2022-11-02",
         };
 
         validateEmail.mockImplementation(() => true);
@@ -242,22 +220,22 @@ describe("POST reservation", () => {
 
     it("should fail if some dates are already in database", () => {
         const mockReservationInDatabase = {
-            "_id": ObjectId("635ea9027fcc5992e79f0329"),
-            "email": "a@gmail.com",
-            "firstName": "V",
-            "lastName": "R",
-            "numberOfPeople": 2,
-            "dates": ["2022-11-05", "2022-11-06", "2022-11-07"]
+            _id: ObjectId("635ea9027fcc5992e79f0329"),
+            email: "a@gmail.com",
+            firstName: "V",
+            lastName: "R",
+            numberOfPeople: 2,
+            dates: ["2022-11-05", "2022-11-06", "2022-11-07"]
         };
         db.collection(RESERVATIONS_COLLECTION).insertOne(mockReservationInDatabase);
         
         const mockReservationToAddToDatabase = {
-            "email": "b@gmail.com",
-            "firstName": "E",
-            "lastName": "T",
-            "numberOfPeople": 3,
-            "checkInDate": "2022-11-07",
-            "checkOutDate": "2022-11-08",
+            email: "b@gmail.com",
+            firstName: "E",
+            lastName: "T",
+            numberOfPeople: 3,
+            checkInDate: "2022-11-07",
+            checkOutDate: "2022-11-08",
         };
 
         validateEmail.mockImplementation(() => true);
@@ -282,12 +260,12 @@ describe("POST reservation", () => {
 
     it("should pass if some dates are not in database", () => {        
         const mockReservationToAddToDatabase = {
-            "email": "b@gmail.com",
-            "firstName": "E",
-            "lastName": "T",
-            "numberOfPeople": 3,
-            "checkInDate": "2022-12-07",
-            "checkOutDate": "2022-12-08",
+            email: "b@gmail.com",
+            firstName: "E",
+            lastName: "T",
+            numberOfPeople: 3,
+            checkInDate: "2022-12-07",
+            checkOutDate: "2022-12-08",
         };
 
         validateEmail.mockImplementation(() => true);
@@ -306,29 +284,6 @@ describe("POST reservation", () => {
 });
 
 describe("DELETE reservation", () => {
-    let connection;
-    let testDatabase;
-    let db;
-
-    beforeAll(async () => {
-        testDatabase = await MongoMemoryServer.create();
-
-        const uri = testDatabase.getUri();
-        const options = {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        };
-
-        connection = await MongoClient.connect(uri, options);
-        db = await connection.db("Test");
-        app.locals.db = db;
-    });
-    
-    afterAll(() => {
-        connection.close();
-        testDatabase.stop()
-    });
-
     it("should fail if reservationId length < MONGODB_OBJECT_ID_LENGTH", () => {
         return request(app)
             .get("/reservation/2")
@@ -359,12 +314,12 @@ describe("DELETE reservation", () => {
 
     it("should pass if reservationId is in database", () => {
         const mockReservation = {
-            "_id": ObjectId("635ea9027fcc5992e79f0322"),
-            "email": "a@gmail.com",
-            "firstName": "V",
-            "lastName": "R",
-            "numberOfPeople": 2,
-            "dates": ["2022-10-31"]
+            _id: ObjectId("635ea9027fcc5992e79f0322"),
+            email: "a@gmail.com",
+            firstName: "V",
+            lastName: "R",
+            numberOfPeople: 2,
+            dates: ["2022-10-31"]
         };
         db.collection(RESERVATIONS_COLLECTION).insertOne(mockReservation);
         return request(app)

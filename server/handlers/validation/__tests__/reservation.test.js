@@ -1,11 +1,4 @@
 const { 
-    MINIMUM_NUMBER_DAYS,
-    MAX_NUMBER_DAYS,
-    MINIMUM_NUMBER_PEOPLE,
-    MAX_NUMBER_PEOPLE
-} = require("../../../constants/reservation");
-
-const { 
     validateEmail,
     validateName,
     validateNumberOfPeople,

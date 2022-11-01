@@ -11,47 +11,44 @@ const {
 
 const validateEmail = (email) => {
     const emailRegEx = /\w+\@\w+\.\w+/;
-    let isEmailGood = false;
 
     if(email){
         if(typeof(email) === "string") {
             if(emailRegEx.test(email)) {
-                isEmailGood = true;
+                return true;
             }
         }
     }
-    return isEmailGood;
+
+    return false;
 };
 
 const validateName = (firstOrLastName) => {
-    let isNameGood = false;
-
     if(firstOrLastName) {
         if(typeof(firstOrLastName) === "string") {
             if(firstOrLastName !== " ") {
-                isNameGood = true;
+                return true;
             }
         }
     }
-    return isNameGood;
+
+    return false;
 };
 
 const validateNumberOfPeople = (number) => {
-    let isNumberGood = false;
-
     if(number) {
         if(typeof(number) === "number") {
             if(number >= MINIMUM_NUMBER_PEOPLE && number <= MAX_NUMBER_PEOPLE) {
-                isNumberGood = true;
+                return true;
             } 
         }
     }
-    return isNumberGood;
+
+    return false;
 };
 
 const validateDate = (date) => {
     const dateRegEx = /\d{4}-\d{2}-\d{2}/;
-    let isDateGood = false;
     const todaysDate = dayjs();
 
     if(date) {
@@ -59,14 +56,15 @@ const validateDate = (date) => {
             if(dateRegEx.test(date)) {
                 if(dayjs(date, 'YYYY-MM-DD', true).isValid()) {
                     if(dayjs(date).diff(todaysDate, "days") >= 0) {
-                        isDateGood = true;
+                        return true;
                     }
                 }
 
             }
         }
     }
-    return isDateGood;
+
+    return false;
 };
 
 const validateNumberOfDaysBooked = (checkInDate, checkOutDate) => {

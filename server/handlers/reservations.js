@@ -1,13 +1,10 @@
 const dayjs = require("dayjs");
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 const { ObjectId } = require("mongodb");
-dayjs.extend(customParseFormat);
-
 const { 
     RESERVATIONS_COLLECTION, 
     MONGODB_OBJECT_ID_LENGTH 
 } = require("../constants/mongoDB");
-
 const { 
     validateEmail,
     validateName,
@@ -15,6 +12,8 @@ const {
     validateDate,
     validateNumberOfDaysBooked
 } = require("./validation/reservation");
+
+dayjs.extend(customParseFormat);
 
 const makeReservation = async (req, res) => {
     const { 
@@ -28,18 +27,15 @@ const makeReservation = async (req, res) => {
 
     const db = req.app.locals.db;
 
-    //validating the entries
-    const isEmailGood = validateEmail(email);
-    const isFirstNameGood = validateName(firstName);
-    const isLastNameGood = validateName(lastName);
-    const isNumberOfPeopleGood = validateNumberOfPeople(numberOfPeople);
-    const isCheckInDateGood = validateDate(checkInDate);
-    const isCheckOutDateGood = validateDate(checkOutDate);
-
-    if(isEmailGood && isFirstNameGood && isLastNameGood && isNumberOfPeopleGood && isCheckInDateGood && isCheckOutDateGood) {
-        const isNumDatesBookedGood = validateNumberOfDaysBooked(checkInDate, checkOutDate);
-
-        if(isNumDatesBookedGood) {
+    if(
+        validateEmail(email)
+        && validateName(firstName)
+        && validateName(lastName)
+        && validateNumberOfPeople(numberOfPeople)
+        && validateDate(checkInDate)
+        && validateDate(checkOutDate)
+    ) {
+        if(validateNumberOfDaysBooked(checkInDate, checkOutDate)) {
             const numDaysBooked = dayjs(checkOutDate).diff(checkInDate, "days") + 1;
             const daysToBookArray = [];
             let index = 1;

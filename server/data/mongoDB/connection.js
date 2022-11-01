@@ -1,8 +1,9 @@
 const { MongoClient } = require("mongodb");
+const { DATABASE_NAME } = require("../../constants/mongoDB");
 require("dotenv").config();
 
 const { MONGO_URI } = process.env;
-const { DATABASE_NAME } = require("../../constants/mongoDB");
+
 const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -14,7 +15,7 @@ const connectToMongoDb = async () => {
     try {
         await client.connect();
         const db = client.db(DATABASE_NAME);
-        console.log("MongoDB connected.")
+        console.log("MongoDB connected.");
         return db;
     }
     catch (err) {
