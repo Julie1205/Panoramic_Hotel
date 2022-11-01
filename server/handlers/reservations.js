@@ -1,5 +1,5 @@
 const dayjs = require("dayjs");
-const customParseFormat = require('dayjs/plugin/customParseFormat');
+const customParseFormat = require("dayjs/plugin/customParseFormat");
 const { ObjectId } = require("mongodb");
 const { 
     RESERVATIONS_COLLECTION, 
@@ -42,13 +42,13 @@ const makeReservation = async (req, res) => {
             
             while(daysToBookArray.length < numDaysBooked) {
                 if(daysToBookArray.length === 0) {
-                    daysToBookArray.push(dayjs(checkInDate).format('YYYY-MM-DD'));
+                    daysToBookArray.push(dayjs(checkInDate).format("YYYY-MM-DD"));
                 }
                 else if(daysToBookArray.length === numDaysBooked - 1) {
-                    daysToBookArray.push(dayjs(checkOutDate).format('YYYY-MM-DD'));
+                    daysToBookArray.push(dayjs(checkOutDate).format("YYYY-MM-DD"));
                 }
                 else {
-                    daysToBookArray.push(dayjs(checkInDate).add(index, "day").format('YYYY-MM-DD'));
+                    daysToBookArray.push(dayjs(checkInDate).add(index, "day").format("YYYY-MM-DD"));
                     index++;
                 }
             };

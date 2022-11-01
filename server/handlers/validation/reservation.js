@@ -1,5 +1,5 @@
 const dayjs = require("dayjs");
-const customParseFormat = require('dayjs/plugin/customParseFormat');
+const customParseFormat = require("dayjs/plugin/customParseFormat");
 dayjs.extend(customParseFormat);
 
 const { 
@@ -54,7 +54,7 @@ const validateDate = (date) => {
     if(date) {
         if(typeof(date) === "string") {
             if(dateRegEx.test(date)) {
-                if(dayjs(date, 'YYYY-MM-DD', true).isValid()) {
+                if(dayjs(date, "YYYY-MM-DD", true).isValid()) {
                     if(dayjs(date).diff(todaysDate, "days") >= 0) {
                         return true;
                     }

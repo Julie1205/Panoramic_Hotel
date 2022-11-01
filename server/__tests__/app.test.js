@@ -12,7 +12,7 @@ const {
     validateNumberOfDaysBooked
 } = require("../handlers/validation/reservation");
 
-jest.mock('../handlers/validation/reservation.js', () => ({
+jest.mock("../handlers/validation/reservation.js", () => ({
     validateEmail: jest.fn(),
     validateName: jest.fn(),
     validateNumberOfPeople: jest.fn(),

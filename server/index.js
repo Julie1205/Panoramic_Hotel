@@ -17,5 +17,5 @@ connectToMongoDb()
     });
 
 //close connection to MongoDb 
-process.on('SIGINT', closeMongoDb);
-process.on('SIGTERM', closeMongoDb);
+process.on("SIGINT", closeMongoDb);
+process.on("SIGTERM", closeMongoDb);
