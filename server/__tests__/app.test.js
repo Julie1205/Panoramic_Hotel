@@ -258,7 +258,7 @@ describe("POST reservation", () => {
             });
     });
 
-    it("should pass if some dates are not in database", () => {        
+    it("should pass if dates are not in database", () => {        
         const mockReservationToAddToDatabase = {
             email: "b@gmail.com",
             firstName: "E",
@@ -279,6 +279,13 @@ describe("POST reservation", () => {
             .send(mockReservationToAddToDatabase)
             .expect(201)
             .expect("Content-Type", /json/)
+            .then(response => {
+                expect(response.body).toEqual({
+                    status: 201,
+                    result: response.body.result,
+                    message: `Your reservation number is ${response.body.result}. To cancel your reservation or retrieve your reservation details, you will need your reservation number.`
+                });
+            });
     });
 
 });
