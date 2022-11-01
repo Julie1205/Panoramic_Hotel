@@ -14,8 +14,8 @@
   },
   "scripts": {
     "start": "nodemon index.js",
-    "test": "jest --watch",
-    "test:coverage": "yarn test --coverage"
+    "test": "jest --watchAll",
+    "test:coverage": "jest --watchAll --coverage"
   },
   "devDependencies": {
     "jest": "^29.2.2",
