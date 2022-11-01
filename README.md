@@ -9,7 +9,7 @@ Bookings can only be for up to 3 days.
 
 ## Technologies used
 ---
-This backend-service is built with: Node.js, Express.js, MongoDb.
+This backend-service is built with: JavaScript, Node.js, Express.js, MongoDb.
 
 Testing is done with: jest, mongodb-memory-server, supertest.
 
@@ -32,7 +32,7 @@ To run the app, you must add a connection string in an .env file under `/server`
 
 You can rename the provide `.env_example` file to `.env` and add your connection string after the `MONGO_URI=` and save.
 
-### Start the application and other details
+### Starting the application and other details
 
 To start the application use the following command
 
